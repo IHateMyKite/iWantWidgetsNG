@@ -13,7 +13,7 @@ using namespace std::literals;
 #define ROUND(x) std::floor(static_cast<float>(x + 0.5f))
 
 //1=ON,0=OFF
-#define LOGGING 1
+#define LOGGING 0
 
 #if(LOGGING > 0)
     #include <spdlog/sinks/basic_file_sink.h>

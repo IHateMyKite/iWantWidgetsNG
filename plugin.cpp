@@ -1,9 +1,5 @@
 #include <IWWPapyrus.h>
 
-
-
-
-
 namespace IWW {
     #if(LOGGING > 0)
         void SetupLog() {

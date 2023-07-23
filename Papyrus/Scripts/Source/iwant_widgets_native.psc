@@ -1,9 +1,9 @@
 Scriptname iwant_widgets_native hidden
 
 ;loading
-Int Function LoadMeter(String asRoot,Int aiXPos = 10000, Int aiYPos = 10000, Bool abVisible = False) global native
-Int Function LoadText(String asRoot, String asDisplayString, String asFont = "$EverywhereFont", Int asSize = 24, Int aiXpos = 10000, Int asYpos = 10000, Bool asVisible = False) global native
-Int Function LoadWidget(String asRoot,String asFilename, Int aiXpos = 10000, Int aiYpos = 10000, Bool abVisible = False) global native
+Int Function LoadMeter(String asRoot,Int aiXPos, Int aiYPos, Bool abVisible) global native
+Int Function LoadText(String asRoot, String asDisplayString, String asFont, Int asSize, Int aiXpos, Int asYpos, Bool asVisible) global native
+Int Function LoadWidget(String asRoot,String asFilename, Int aiXpos, Int aiYpos, Bool abVisible) global native
 
 ;generic
 Function SetPos(String asRoot, Int aiId, Int aiXpos, Int aiYpos) global native
@@ -23,15 +23,18 @@ Function SetMeterFillDirection(String asRoot,Int aiId, String asDirection) globa
 Function SendToBack(String asRoot,Int aiId) global native
 Function SendToFront(String asRoot,Int aiId) global native
 Function DoMeterFlash(String asRoot, Int aiId) global native
-Function SetMeterRGB(String asRoot, Int aiId, Int aiLightR = 255, Int aiLightG = 255, Int aiLightB = 255, Int aiDarkR = 0, \
-                        Int aiDarkG = 0, Int aiDarkB = 0, Int aiFlashR = 127, Int aiFlashG = 127, Int aiFlashB = 127) global native
+Function SetMeterRGB(String asRoot, Int aiId, Int aiLightR, Int aiLightG, Int aiLightB, Int aiDarkR, \
+                        Int aiDarkG, Int aiDarkB, Int aiFlashR, Int aiFlashG, Int aiFlashB) global native
 
 
 ;text
 Function SetText(String asRoot, Int aiId, String asDisplayString) global native
 Function AppendText(String asRoot, Int aiId, String asDisplayString) global native
 
+;drwaw
+Function DrawShapeLine(String asRoot, Int[] aaList, Int aiXPos, Int aiYPos, Int aiXChange, Int aiYChange, Bool abSkipInvisible, Bool abSkipAlpha0) global native
+Function DrawShapeCircle(String asRoot, Int[] aaList, Int aiXPos, Int aiYPos, Int aiRadius, Int aiStartAngle, Int aiDegreeChange, Bool abSkipInvisible, Bool abSkipAlpha0, Bool abAutoSpace) global native
+Function DrawShapeOrbit(String asRoot, Int[] aaList, Int aiXPos, Int aiYPos, Int aiRadius, Int aiStartAngle, Int aiDegreeChange, Bool abSkipInvisible, Bool abSkipAlpha0, Bool abAutoSpace) global native
 
-
-
-
+;transition
+Function DoTransitionByTime(String asRoot, Int aiId, Int aiTargetValue, Float afSeconds, String asTargetAttribute, String asEasingClass, String asEasingMethod, Float afDelay) global native

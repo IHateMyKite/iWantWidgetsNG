@@ -3,5 +3,6 @@
 .vscode/settings.json
 build
 cmake-build*
-./PAPYRUS
+Papyrus/PAPYRUS
 *.pex
+Papyrus/Scripts/BUILD_ALL.bat

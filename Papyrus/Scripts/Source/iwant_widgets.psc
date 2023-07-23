@@ -135,73 +135,15 @@ Function destroy(Int id)
 EndFunction
 
 Function drawShapeLine(Int[] list, Int XPos = 639, Int YPos = 359, Int XChange = 25, Int YChange = 25, Bool skipInvisible = True, Bool skipAlpha0 = True)
-	String[] value
-	String s
-	Int i = 0
-	
-	value = Utility.CreateStringArray((list.Length + 6), "")
-	value[0] = XPos As String
-	value[1] = YPos As String
-	value[2] = XChange As String
-	value[3] = YChange As String
-	value[4] = (skipInvisible As Int) As String
-	value[5] = (skipAlpha0 As Int) As String
-	While i < list.Length
-		value[(i + 6)] = list[i]
-		i += 1
-	EndWhile
-	
-	s = _serializeArray(value)
-
-	UI.InvokeString(HUD_MENU, WidgetRoot + ".drawLine", s)
+    iwant_widgets_native.drawShapeLine(WidgetRoot,list,XPos,YPos,XChange,YChange,skipInvisible,skipAlpha0)
 EndFunction
 
 Function drawShapeCircle(Int[] list, Int XPos = 639, Int YPos = 359, Int radius = 50, Int startAngle = 0, Int degreeChange = 45, Bool skipInvisible = True, Bool skipAlpha0 = True, Bool autoSpace = False)
-	String[] value
-	String s
-	Int i = 0
-	
-	value = Utility.CreateStringArray((list.Length + 8), "")
-	value[0] = XPos As String
-	value[1] = YPos As String
-	value[2] = radius As String
-	value[3] = startAngle As String
-	value[4] = degreeChange As String
-	value[5] = (skipInvisible As Int) As String
-	value[6] = (skipAlpha0 As Int) As String
-	value[7] = (autoSpace As Int) As String
-	While i < list.Length
-		value[(i + 8)] = list[i]
-		i += 1
-	EndWhile
-	
-	s = _serializeArray(value)
-
-	UI.InvokeString(HUD_MENU, WidgetRoot + ".drawCircle", s)
+	iwant_widgets_native.drawShapeCircle(WidgetRoot,list,XPos,YPos,radius,startAngle,degreeChange,skipInvisible,skipAlpha0,autoSpace)
 EndFunction
 
 Function drawShapeOrbit(Int[] list, Int XPos = 639, Int YPos = 359, Int radius = 50, Int startAngle = 0, Int degreeChange = 45, Bool skipInvisible = True, Bool skipAlpha0 = True, Bool autoSpace = False)
-	String[] value
-	String s
-	Int i = 0
-	
-	value = Utility.CreateStringArray((list.Length + 8), "")
-	value[0] = XPos As String
-	value[1] = YPos As String
-	value[2] = radius As String
-	value[3] = startAngle As String
-	value[4] = degreeChange As String
-	value[5] = (skipInvisible As Int) As String
-	value[6] = (skipAlpha0 As Int) As String
-	value[7] = (autoSpace As Int) As String
-	While i < list.Length
-		value[(i + 8)] = list[i]
-		i += 1
-	EndWhile
-	
-	s = _serializeArray(value)
-
-	UI.InvokeString(HUD_MENU, WidgetRoot + ".drawOrbit", s)
+	iwant_widgets_native.drawShapeOrbit(WidgetRoot,list,XPos,YPos,radius,startAngle,degreeChange,skipInvisible,skipAlpha0,autoSpace)
 EndFunction
 
 Function doTransition(Int id, Int targetValue, Int frames = 60, String targetAttribute = "alpha", String easingClass = "none", String easingMethod = "none", Int delay = 0)
@@ -222,49 +164,7 @@ Function doTransitionByFrames(Int id, Int targetValue, Int frames = 120, String 
 EndFunction
 
 Function doTransitionByTime(Int id, Int targetValue, Float seconds = 2.0, String targetAttribute = "alpha", String easingClass = "none", String easingMethod = "none", Float delay = 0.0)
-	String[] value
-	String s
-	Int i = 0
-
-	value = Utility.CreateStringArray(7, "")
-	value[0] = id As String
-	value[1] = targetValue As String
-	value[2] = seconds As String
-
-	If (targetAttribute == "x" || targetAttribute == "y" || targetAttribute == "xscale" || targetAttribute == "yscale" || targetAttribute == "rotation")
-		value[3] = "_"+targetAttribute
-	ElseIf targetAttribute == "meterpercent"
-		value[1] = (targetValue / 100.0) as String
-		value[3] = "percent"
-	Else
-		; Default to alpha
-		value[3] = "_alpha"
-	EndIf
-	
-	If (easingClass == "regular" || easingClass == "bounce" || easingClass == "back" || easingClass == "elastic" || easingClass == "strong")
-		value[4] = easingClass
-	Else
-		; Default to no easing
-		value[4] = "none"
-	EndIf
-	
-	If (easingMethod == "in")
-		value[5] = "easeIn"
-	ElseIf easingMethod == "out"
-		value[5] = "easeOut"
-	ElseIf easingMethod == "inout"
-		value[5] = "easeInOut"
-	Else
-		; If a valid easing method is not defined, revert to no easing
-		value[4] = "none"
-		value[5] = ""
-	EndIf
-	
-	value[6] = delay As String
-
-	s = _serializeArray(value)
-
-	UI.InvokeString(HUD_MENU, WidgetRoot + ".doTransition", s)
+	iwant_widgets_native.DoTransitionByTime(WidgetRoot,id,targetValue,seconds,targetAttribute,easingClass,easingMethod,delay)
 EndFunction
 
 Function setAllVisible(Bool visible = True)

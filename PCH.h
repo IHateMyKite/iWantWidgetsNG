@@ -9,7 +9,10 @@
 
 using namespace std::literals;
 
-#define PAPYRUSFUNCHANDLE RE::BSScript::Internal::VirtualMachine* a_vm, const RE::VMStackID a_stackID, RE::StaticFunctionTag*
+#define PAPYRUSFUNCHANDLE RE::StaticFunctionTag*
+#define PAPYRUSUNHOOKFPS true
+
+
 #define ROUND(x) std::floor(static_cast<float>(x + 0.5f))
 
 //1=ON,0=OFF
@@ -17,7 +20,16 @@ using namespace std::literals;
 
 #if(LOGGING > 0)
     #include <spdlog/sinks/basic_file_sink.h>
+    #define DEBUGLOG(...) {SKSE::log::info(__VA_ARGS__);}
+#else
+    #define DEBUGLOG(...) {}
+#endif
+
+
+#if(LOGGING > 1)
+    #include <spdlog/sinks/basic_file_sink.h>
     #define SKSELOG(...) {SKSE::log::info(__VA_ARGS__);}
 #else
     #define SKSELOG(...) {}
 #endif
+

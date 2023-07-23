@@ -3,7 +3,7 @@
 
 bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
 {
-    #define REGISTERPAPYRUSFUNC(name) {vm->RegisterFunction(#name, "iwant_widgets_native", IWW::name);}
+    #define REGISTERPAPYRUSFUNC(name) {vm->RegisterFunction(#name, "iwant_widgets_native", IWW::name,PAPYRUSUNHOOKFPS);}
 
     REGISTERPAPYRUSFUNC(LoadMeter)
     REGISTERPAPYRUSFUNC(LoadText)
@@ -29,6 +29,12 @@ bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
     REGISTERPAPYRUSFUNC(SetText)
     REGISTERPAPYRUSFUNC(AppendText)
     REGISTERPAPYRUSFUNC(SwapDepths)
+
+    REGISTERPAPYRUSFUNC(DrawShapeLine)
+    REGISTERPAPYRUSFUNC(DrawShapeCircle)
+    REGISTERPAPYRUSFUNC(DrawShapeOrbit)
+
+    REGISTERPAPYRUSFUNC(DoTransitionByTime)
 
     #undef REGISTERPAPYRUSFUNC
     return true;

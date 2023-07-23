@@ -1,4 +1,5 @@
 #include <IWWPapyrus.h>
+#include <IWWFunctions.h>
 
 namespace IWW {
     #if(LOGGING > 0)

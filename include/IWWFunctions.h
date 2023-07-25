@@ -43,6 +43,7 @@ namespace IWW
     RE::GFxValue    resname;                                                                    \
     INVOKEARGRESET_arg.SetString(argname);                                                      \
     hudname->Invoke(INVOKEARGRESET_path.c_str(),&resname,&INVOKEARGRESET_arg,1);                \
+    _UpdateWidget(hudname);                                                                     \
     RE::GFxValue INVOKEARGRESET_message;                                                        \
     std::string INVOKEARGRESET_pathresetoutput = (a_root + "._getOutputMessage");               \
     hudname->Invoke(INVOKEARGRESET_pathresetoutput.c_str(),&INVOKEARGRESET_message,NULL,0);     \
@@ -63,7 +64,8 @@ namespace IWW
     std::string     INVOKEARGNORESRESET_path = (root + funname);                                            \
     RE::GFxValue    INVOKEARGNORESRESET_arg;                                                                \
     INVOKEARGNORESRESET_arg.SetString(argname);                                                             \
-    hudname->InvokeNoReturn(INVOKEARGNORESRESET_path.c_str(),&INVOKEARGNORESRESET_arg,1);                   \
+    hudname->Invoke(INVOKEARGNORESRESET_path.c_str(),NULL,&INVOKEARGNORESRESET_arg,1);                      \
+    _UpdateWidget(hudname);                                                                                 \
     RE::GFxValue INVOKEARGNORESRESET_message;                                                               \
     std::string INVOKEARGNORESRESET_pathresetoutput = (a_root + "._getOutputMessage");                      \
     hudname->Invoke(INVOKEARGNORESRESET_pathresetoutput.c_str(),&INVOKEARGNORESRESET_message,NULL,0);       \
@@ -79,9 +81,16 @@ namespace IWW
     RE::GFxValue    INVOKEARGNORES_arg2;                                      \
     INVOKEARGNORES_arg2.SetString(argname2);                                  \
     hudname->InvokeNoReturn(INVOKEARGNORES_pathloadmeter1.c_str(),&INVOKEARGNORES_arg1,1); \
+    _UpdateWidget(hudname);                                                                \
     hudname->InvokeNoReturn(INVOKEARGNORES_pathloadmeter2.c_str(),&INVOKEARGNORES_arg2,1); \
     _UpdateWidget(hudname);                                                   \
     g_mutex.unlock();
+
+    #define VALIDATEID(id,retvalue) \
+    if (id < 1) {                   \
+        SKSELOG("id == -1 -> skipping") \
+        return retvalue;            \
+    }
 
     template<auto N>
     std::string _SelializeArray(const std::array<std::string,N> & a_array);

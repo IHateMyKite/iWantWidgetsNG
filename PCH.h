@@ -20,16 +20,7 @@ using namespace std::literals;
 
 #if(LOGGING > 0)
     #include <spdlog/sinks/basic_file_sink.h>
-    #define DEBUGLOG(...) {SKSE::log::info(__VA_ARGS__);}
-#else
-    #define DEBUGLOG(...) {}
-#endif
-
-
-#if(LOGGING > 1)
-    #include <spdlog/sinks/basic_file_sink.h>
     #define SKSELOG(...) {SKSE::log::info(__VA_ARGS__);}
 #else
     #define SKSELOG(...) {}
 #endif
-

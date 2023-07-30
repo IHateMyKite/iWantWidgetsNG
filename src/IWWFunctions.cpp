@@ -237,12 +237,12 @@ void IWW::Destroy(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
     );
     
     SKSELOG("Destroy({},{}) called",a_root,loc_argstr) //logging
-    //
-    //VALIDATEID(a_id,)
-    //
-    //RE::GFxMovieView* loc_view = g_hudmenu;
-    //if (loc_view == nullptr) return;
-    //INVOKEARGNORES(a_root,loc_view,loc_argstr,".destroy")
+    
+    VALIDATEID(a_id,)
+    
+    RE::GFxMovieView* loc_view = g_hudmenu;
+    if (loc_view == nullptr) return;
+    INVOKEARGNORES(a_root,loc_view,loc_argstr,".destroy")
 }
 
 void IWW::SetMeterPercent(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_perc)

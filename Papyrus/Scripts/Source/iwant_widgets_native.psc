@@ -26,7 +26,6 @@ Function DoMeterFlash(String asRoot, Int aiId) global native
 Function SetMeterRGB(String asRoot, Int aiId, Int aiLightR, Int aiLightG, Int aiLightB, Int aiDarkR, \
                         Int aiDarkG, Int aiDarkB, Int aiFlashR, Int aiFlashG, Int aiFlashB) global native
 
-
 ;text
 Function SetText(String asRoot, Int aiId, String asDisplayString) global native
 Function AppendText(String asRoot, Int aiId, String asDisplayString) global native
@@ -38,3 +37,7 @@ Function DrawShapeOrbit(String asRoot, Int[] aaList, Int aiXPos, Int aiYPos, Int
 
 ;transition
 Function DoTransitionByTime(String asRoot, Int aiId, Int aiTargetValue, Float afSeconds, String asTargetAttribute, String asEasingClass, String asEasingMethod, Float afDelay) global native
+
+;other
+bool Function IsReloaded() global native
+     Function ResetReload() global native

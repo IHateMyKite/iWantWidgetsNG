@@ -6,10 +6,11 @@ namespace IWW
 {
     //mutex for safety reason
     extern std::mutex g_mutex;
-    extern std::mutex g_mutex2;
+    extern RE::GFxMovieView* g_hudmenu;
+    extern bool g_IsReloaded;
 
     inline void _UpdateWidget(RE::GFxMovieView* a_view);
-    inline RE::GFxMovieView* _GetHud();
+    inline void _UpdateHud();
 
     template<auto N>
     inline std::string _SelializeArray(const std::array<std::string, N>& a_array)
@@ -88,7 +89,7 @@ namespace IWW
 
     #define VALIDATEID(id,retvalue) \
     if (id < 1) {                   \
-        SKSELOG("id == -1 -> skipping") \
+        ERRORLOG("ERROR: id == -1 => skipping function call") \
         return retvalue;            \
     }
 
@@ -134,4 +135,8 @@ namespace IWW
 
     //transition
     void DoTransitionByTime(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int targetValue, float a_seconds, std::string a_targetAttribute, std::string a_easingClass, std::string a_easingMethod, float a_delay);
+
+    //util
+    bool IsReloaded(PAPYRUSFUNCHANDLE);
+    void ResetReload(PAPYRUSFUNCHANDLE);
 }

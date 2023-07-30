@@ -36,6 +36,9 @@ bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
 
     REGISTERPAPYRUSFUNC(DoTransitionByTime)
 
+    REGISTERPAPYRUSFUNC(IsReloaded)
+    REGISTERPAPYRUSFUNC(ResetReload)
+
     #undef REGISTERPAPYRUSFUNC
     return true;
 }

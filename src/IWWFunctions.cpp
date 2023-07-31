@@ -6,13 +6,16 @@ bool IWW::g_IsReloaded = false;
 
 void IWW::OnMessageReceived(SKSE::MessagingInterface::Message* a_msg)
 {
-    switch(a_msg->type)
+    if (a_msg != nullptr)
     {
-    case SKSE::MessagingInterface::kPostLoadGame:
-    case SKSE::MessagingInterface::kNewGame:
-        g_IsReloaded = true;
-        _UpdateHud();
-        break;
+        switch(a_msg->type)
+        {
+        case SKSE::MessagingInterface::kPostLoadGame:   //for loading existing game
+        case SKSE::MessagingInterface::kSaveGame:       //for new game
+            g_IsReloaded = true;
+            _UpdateHud();
+            break;
+        }
     }
 }
 
@@ -25,7 +28,7 @@ int IWW::LoadMeter(PAPYRUSFUNCHANDLE, std::string a_root, int a_xpos, int a_ypos
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) 
     {
-        SKSELOG("LoadMeter({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
+        ERRORLOG("LoadMeter({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
         return -1; 
     }
 
@@ -52,7 +55,7 @@ int IWW::LoadText(PAPYRUSFUNCHANDLE, std::string a_root, std::string a_text, std
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) 
     {
-        SKSELOG("LoadText({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
+        ERRORLOG("LoadText({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
         return -1; 
     }
 
@@ -77,7 +80,7 @@ int IWW::LoadWidget(PAPYRUSFUNCHANDLE, std::string a_root, std::string a_filenam
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) 
     {
-        SKSELOG("loadWidget({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
+        ERRORLOG("loadWidget({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
         return -1; 
     }
 

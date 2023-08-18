@@ -5,12 +5,13 @@
 namespace IWW
 {
     //mutex for safety reason
-    extern std::mutex g_mutex;
-    extern RE::GFxMovieView* g_hudmenu;
-    extern bool g_IsReloaded;
+    extern std::mutex           g_mutex;
+    extern RE::GFxMovieView*    g_hudmenu;
+
+    extern std::atomic_bool     g_reseting;
 
     inline void _UpdateWidget(RE::GFxMovieView* a_view);
-    inline void _UpdateHud();
+    inline bool _UpdateHud();
 
     template<auto N>
     inline std::string _SelializeArray(const std::array<std::string, N>& a_array)
@@ -20,7 +21,7 @@ namespace IWW
             std::string loc_res = a_array[0];
             for(size_t i = 1; i < a_array.size(); i++)
             {
-                loc_res += "|" + a_array[i];
+                loc_res += ("|" + a_array[i]);
             }
             return loc_res;
         }
@@ -75,6 +76,14 @@ namespace IWW
     INVOKEEND                                                                   \
     SKSELOG("INVOKEARGNORES")
 
+    #define INVOKENOARGNORES(root,hudname,funname)                              \
+    INVOKESTART                                                                 \
+    std::string     INVOKENOARGNORES_pathloadmeter = (root + funname);          \
+    hudname->InvokeNoReturn(INVOKENOARGNORES_pathloadmeter.c_str(),NULL,0);     \
+    _UpdateWidget(hudname);                                                     \
+    INVOKEEND                                                                   \
+    SKSELOG("INVOKENOARGNORES")
+
     #define INVOKEARGNORESRESET(root,hudname,argname,funname)                                               \
     INVOKESTART                                                                                             \
     std::string     INVOKEARGNORESRESET_path = (root + funname);                                            \
@@ -115,6 +124,8 @@ namespace IWW
 
     void OnMessageReceived(SKSE::MessagingInterface::Message* a_msg);
 
+
+
     //load functions
     int LoadMeter(PAPYRUSFUNCHANDLE, std::string a_root, int a_xpos, int a_ypos, bool a_visible);
     int LoadText(PAPYRUSFUNCHANDLE, std::string a_root, std::string a_text, std::string a_font, int a_size, int a_xpos, int a_ypos, bool a_visible);
@@ -153,7 +164,10 @@ namespace IWW
     //transition
     void DoTransitionByTime(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int targetValue, float a_seconds, std::string a_targetAttribute, std::string a_easingClass, std::string a_easingMethod, float a_delay);
 
-    //util
-    bool IsReloaded(PAPYRUSFUNCHANDLE);
-    void ResetReload(PAPYRUSFUNCHANDLE);
+    //hud ready
+    //Return true if hud is ready. Also try to update HUD if its not. 
+    //Return false if it still fails to get HUD data
+    bool IsHudReady(PAPYRUSFUNCHANDLE); 
+    void Reset(PAPYRUSFUNCHANDLE,std::string a_root);
+    bool IsResetting(PAPYRUSFUNCHANDLE);
 }

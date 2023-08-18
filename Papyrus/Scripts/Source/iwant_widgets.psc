@@ -33,20 +33,12 @@ Int Function loadMeter(Int xpos = 10000, Int ypos = 10000, Bool visible = False)
     return iwant_widgets_native.LoadMeter(WidgetRoot,xpos,ypos,visible)
 EndFunction
 
-Function _waitForReadyToLoad(bool abCheckOnly = true, bool abCheckReset = true)
-    if !abCheckOnly && iwant_widgets_native.IsReloaded()
-        RegisterForSingleUpdate(3.0)
-    endif
-    
+Function _waitForReadyToLoad(bool abCheckReset = true)
     ; Make sure SkyUI say we're Ready
-    While (iwant_widgets_native.IsReloaded() || (abCheckReset && _Reseting))
-        Utility.WaitMenuMode(0.5)
+    While !iwant_widgets_native.IsHudReady() || (abCheckReset && iwant_widgets_native.IsResetting())
+        Utility.WaitMenuMode(0.25)
     EndWhile
 EndFunction
-
-Event OnUpdate()
-    iwant_widgets_native.ResetReload()
-EndEvent
 
 String Function _getMessageFromFlash()
     return "!!!DO NOT USE!!!"
@@ -234,9 +226,8 @@ EndFunction
 
 Function triggerReset()
     Debug.Trace("iWant Widgets: ***LIBRARY RESET***")
-    _waitForReadyToLoad(false,false)
-    UI.Invoke(HUD_MENU, WidgetRoot + "._reset")
-    _Reseting = false
+    _waitForReadyToLoad(false) ;wait for hud to be ready
+    iwant_widgets_native.Reset(WidgetRoot)
     RegisterForModEvent("iWantWidgetsReset", "OniWantWidgetsReset")
     SendModEvent("iWantWidgetsReset")
 EndFunction
@@ -383,7 +374,6 @@ Function _setSkyrimRotation(String element, Int rot = 0)
 EndFunction
 
 Event OnWidgetReset()
-    _Reseting = true
     ; Overrides SKI_WidgetBase
     Parent.OnWidgetReset()
     

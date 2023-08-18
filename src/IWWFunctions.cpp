@@ -1,8 +1,8 @@
 #include <IWWFunctions.h>
 
-std::mutex IWW::g_mutex;
-RE::GFxMovieView* IWW::g_hudmenu = nullptr;
-bool IWW::g_IsReloaded = false;
+std::mutex          IWW::g_mutex;
+RE::GFxMovieView*   IWW::g_hudmenu      = nullptr;
+std::atomic_bool    IWW::g_reseting     = true;
 
 void IWW::OnMessageReceived(SKSE::MessagingInterface::Message* a_msg)
 {
@@ -11,17 +11,45 @@ void IWW::OnMessageReceived(SKSE::MessagingInterface::Message* a_msg)
         switch(a_msg->type)
         {
         case SKSE::MessagingInterface::kPostPostLoad:
-            g_IsReloaded = true;
             SKSELOG("kPostPostLoad")
             break;
+        case SKSE::MessagingInterface::kPreLoadGame:    //set reload flag, so we can prevent in papyrus calls of native function untill view get reset by invoking _reset
+            g_reseting = true;
         case SKSE::MessagingInterface::kPostLoadGame:   //for loading existing game
         case SKSE::MessagingInterface::kSaveGame:       //for new game
-            g_IsReloaded = true;
             _UpdateHud();
             SKSELOG("kPostLoadGame | kSaveGame")
             break;
         }
     }
+}
+
+bool IWW::IsHudReady(PAPYRUSFUNCHANDLE)
+{
+    return _UpdateHud();
+}
+
+void IWW::Reset(PAPYRUSFUNCHANDLE, std::string a_root)
+{
+    SKSELOG("Reset({}) called",a_root) //logging
+
+    RE::GFxMovieView* loc_view = g_hudmenu;
+    if (loc_view == nullptr) 
+    {
+        ERRORLOG("Reset({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
+        return;
+    }
+
+    INVOKENOARGNORES(a_root,loc_view,"._reset")
+
+    SKSELOG("Reset({}) done",a_root) //logging
+
+    g_reseting = false; //reset done
+}
+
+bool IWW::IsResetting(PAPYRUSFUNCHANDLE)
+{
+    return g_reseting;
 }
 
 int IWW::LoadMeter(PAPYRUSFUNCHANDLE, std::string a_root, int a_xpos, int a_ypos, bool a_visible)
@@ -531,33 +559,24 @@ void IWW::DoTransitionByTime(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, in
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".doTransition")
 }
 
-bool IWW::IsReloaded(PAPYRUSFUNCHANDLE)
-{
-    return g_IsReloaded;
-}
-
-void IWW::ResetReload(PAPYRUSFUNCHANDLE)
-{
-    SKSELOG("ResetReload called")
-    g_IsReloaded = false;
-}
-
 void IWW::_UpdateWidget(RE::GFxMovieView* a_view)
 {
     //update by very small time so internal AS vars are updated
     a_view->Advance(0.0f);
 }
 
-inline void IWW::_UpdateHud()
+inline bool IWW::_UpdateHud()
 {
     #define CHECKHUDERROR(ptr,errvalue,msg)    \
     {                               \
         if (ptr == errvalue)        \
         {                           \
         ERRORLOG(msg)               \
-        return;                     \
+        return false;               \
         }                           \
     }
+
+    if (g_hudmenu != nullptr) return true;
 
     RE::UI* loc_ui = RE::UI::GetSingleton();
     CHECKHUDERROR(loc_ui,nullptr,"ERROR: Failed getting hud - loc_ui => null")
@@ -573,4 +592,6 @@ inline void IWW::_UpdateHud()
     SKSELOG("HUD Loaded!")
 
     #undef CHECKHUDERROR
+
+    return true;
 }

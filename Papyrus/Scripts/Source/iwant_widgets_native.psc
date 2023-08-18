@@ -39,5 +39,6 @@ Function DrawShapeOrbit(String asRoot, Int[] aaList, Int aiXPos, Int aiYPos, Int
 Function DoTransitionByTime(String asRoot, Int aiId, Int aiTargetValue, Float afSeconds, String asTargetAttribute, String asEasingClass, String asEasingMethod, Float afDelay) global native
 
 ;other
-bool Function IsReloaded() global native
-     Function ResetReload() global native
+bool Function IsHudReady()              global native
+     Function Reset(String asRoot)      global native
+bool Function IsResetting()             global native

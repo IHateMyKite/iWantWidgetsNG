@@ -10,10 +10,15 @@ void IWW::OnMessageReceived(SKSE::MessagingInterface::Message* a_msg)
     {
         switch(a_msg->type)
         {
+        case SKSE::MessagingInterface::kPostPostLoad:
+            g_IsReloaded = true;
+            SKSELOG("kPostPostLoad")
+            break;
         case SKSE::MessagingInterface::kPostLoadGame:   //for loading existing game
         case SKSE::MessagingInterface::kSaveGame:       //for new game
             g_IsReloaded = true;
             _UpdateHud();
+            SKSELOG("kPostLoadGame | kSaveGame")
             break;
         }
     }
@@ -201,6 +206,7 @@ void IWW::SetRotation(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_rot
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".setRotation")
 }
 
@@ -214,6 +220,7 @@ void IWW::SetTransparency(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".setAlpha")
 }
 
@@ -230,6 +237,7 @@ void IWW::SetRGB(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_r, int a
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".setColor")
 }
 
@@ -258,6 +266,7 @@ void IWW::SetMeterPercent(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".setMeterPercent")
 }
 
@@ -271,6 +280,7 @@ void IWW::SetMeterFillDirection(PAPYRUSFUNCHANDLE, std::string a_root, int a_id,
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".setMeterFillDirection")
 }
 
@@ -284,6 +294,7 @@ void IWW::SendToBack(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".sendToBack")
 }
 
@@ -297,6 +308,7 @@ void IWW::SendToFront(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".sendToFront")
 }
 
@@ -310,6 +322,7 @@ void IWW::DoMeterFlash(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".doMeterFlash")
 }
 
@@ -328,6 +341,7 @@ void IWW::SetMeterRGB(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_lig
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".setMeterColors")
 }
 
@@ -344,6 +358,7 @@ void IWW::SetText(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, std::string a
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".setText")
 }
 
@@ -360,6 +375,7 @@ void IWW::AppendText(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, std::strin
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".appendText")
 }
 
@@ -377,6 +393,7 @@ void IWW::SwapDepths(PAPYRUSFUNCHANDLE, std::string a_root, int a_id1, int a_id2
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".swapDepths")
 }
 
@@ -393,13 +410,14 @@ void IWW::DrawShapeLine(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int> 
 
     for(auto&& it : a_list)
     {
-        loc_argstr += + "|" + it; 
+        loc_argstr += std::string("|" + std::to_string(it));
     }
 
     SKSELOG("DrawShapeLine({},{}) called",a_root,loc_argstr) //logging
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".drawLine")
 }
 
@@ -418,13 +436,14 @@ void IWW::DrawShapeCircle(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int
 
     for(auto&& it : a_list)
     {
-        loc_argstr += + "|" + it; 
+        loc_argstr += std::string("|" + std::to_string(it));
     }
 
     SKSELOG("DrawShapeCircle({},{}) called",a_root,loc_argstr) //logging
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".drawCircle")
 }
 
@@ -443,13 +462,14 @@ void IWW::DrawShapeOrbit(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int>
 
     for(auto&& it : a_list)
     {
-        loc_argstr += + "|" + it; 
+        loc_argstr += std::string("|" + std::to_string(it));
     }
 
     SKSELOG("DrawShapeOrbit({},{}) called",a_root,loc_argstr) //logging
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".drawOrbit")
 }
 
@@ -507,6 +527,7 @@ void IWW::DoTransitionByTime(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, in
 
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) return;
+
     INVOKEARGNORES(a_root,loc_view,loc_argstr,".doTransition")
 }
 
@@ -524,7 +545,7 @@ void IWW::ResetReload(PAPYRUSFUNCHANDLE)
 void IWW::_UpdateWidget(RE::GFxMovieView* a_view)
 {
     //update by very small time so internal AS vars are updated
-    a_view->Advance(0.00001f);
+    a_view->Advance(0.0f);
 }
 
 inline void IWW::_UpdateHud()
@@ -548,6 +569,8 @@ inline void IWW::_UpdateHud()
     CHECKHUDERROR(loc_movie.get(),nullptr,"ERROR: Failed getting hud - loc_movie => null")
 
     g_hudmenu = loc_movie.get();
+
+    SKSELOG("HUD Loaded!")
 
     #undef CHECKHUDERROR
 }

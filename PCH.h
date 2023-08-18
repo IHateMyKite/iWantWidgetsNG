@@ -12,18 +12,17 @@ using namespace std::literals;
 #define PAPYRUSFUNCHANDLE RE::StaticFunctionTag*
 #define PAPYRUSUNHOOKFPS true
 
-
 #define ROUND(x) std::floor(static_cast<float>(x + 0.5f))
-
-#include <spdlog/sinks/basic_file_sink.h>
 
 //1=ON,0=OFF
 #define LOGGING 0
 
 #if(LOGGING > 0)
+    #include <spdlog/sinks/basic_file_sink.h>
     #define SKSELOG(...) {SKSE::log::info(__VA_ARGS__);}
+    #define ERRORLOG(...) {SKSE::log::info(__VA_ARGS__);}
 #else
     #define SKSELOG(...) {}
+    #define ERRORLOG(...) {}
 #endif
 
-#define ERRORLOG(...) {SKSE::log::info(__VA_ARGS__);}

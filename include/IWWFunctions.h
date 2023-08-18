@@ -27,18 +27,31 @@ namespace IWW
         else return std::string("");
     }
 
+    #define INVOKESTART             \
+        {                           \
+            SKSELOG("INVOKESTART")  \
+            g_mutex.lock();         \
+        }
+
+    #define INVOKEEND               \
+        {                           \
+            SKSELOG("INVOKEEND")    \
+            g_mutex.unlock();       \
+        }
+
     #define INVOKEARG(root,hudname,argname,resname,funname)             \
-    g_mutex.lock();                                                     \
+    INVOKESTART                                                         \
     std::string     INVOKEARG_pathloadmeter = (root + funname);         \
     RE::GFxValue    INVOKEARG_arg;                                      \
     RE::GFxValue    resname;                                            \
     INVOKEARG_arg.SetString(argname);                                   \
     hudname->Invoke(INVOKEARG_pathloadmeter.c_str(),&resname,&INVOKEARG_arg,1); \
     _UpdateWidget(hudname);                                             \
-    g_mutex.unlock();
+    INVOKEEND                                                           \
+    SKSELOG("INVOKEARG")
 
     #define INVOKEARGRESET(root,hudname,argname,resname,funname)                                \
-    g_mutex.lock();                                                                             \
+    INVOKESTART                                                                                 \
     std::string     INVOKEARGRESET_path = (root + funname);                                     \
     RE::GFxValue    INVOKEARGRESET_arg;                                                         \
     RE::GFxValue    resname;                                                                    \
@@ -49,19 +62,21 @@ namespace IWW
     std::string INVOKEARGRESET_pathresetoutput = (a_root + "._getOutputMessage");               \
     hudname->Invoke(INVOKEARGRESET_pathresetoutput.c_str(),&INVOKEARGRESET_message,NULL,0);     \
     _UpdateWidget(hudname);                                                                     \
-    g_mutex.unlock();
+    INVOKEEND                                                                                   \
+    SKSELOG("INVOKEARGRESET")
 
     #define INVOKEARGNORES(root,hudname,argname,funname)                        \
-    g_mutex.lock();                                                             \
+    INVOKESTART                                                                 \
     std::string     INVOKEARGNORES_pathloadmeter = (root + funname);            \
     RE::GFxValue    INVOKEARGNORES_arg;                                         \
     INVOKEARGNORES_arg.SetString(argname);                                      \
     hudname->InvokeNoReturn(INVOKEARGNORES_pathloadmeter.c_str(),&INVOKEARGNORES_arg,1); \
     _UpdateWidget(hudname);                                                     \
-    g_mutex.unlock(); 
+    INVOKEEND                                                                   \
+    SKSELOG("INVOKEARGNORES")
 
     #define INVOKEARGNORESRESET(root,hudname,argname,funname)                                               \
-    g_mutex.lock();                                                                                         \
+    INVOKESTART                                                                                             \
     std::string     INVOKEARGNORESRESET_path = (root + funname);                                            \
     RE::GFxValue    INVOKEARGNORESRESET_arg;                                                                \
     INVOKEARGNORESRESET_arg.SetString(argname);                                                             \
@@ -70,26 +85,28 @@ namespace IWW
     RE::GFxValue INVOKEARGNORESRESET_message;                                                               \
     std::string INVOKEARGNORESRESET_pathresetoutput = (a_root + "._getOutputMessage");                      \
     hudname->Invoke(INVOKEARGNORESRESET_pathresetoutput.c_str(),&INVOKEARGNORESRESET_message,NULL,0);       \
-    _UpdateWidget(hudname);                                        \
-    g_mutex.unlock();     
+    _UpdateWidget(hudname);                                                                                 \
+    INVOKEEND                                                                                               \
+    SKSELOG("INVOKEARGNORESRESET")
 
-    #define INVOKEARGNORES2(root,hudname,argname1,argname2,funname1,funname2) \
-    g_mutex.lock();                                                           \
-    std::string     INVOKEARGNORES_pathloadmeter1 = (root + funname1);        \
-    std::string     INVOKEARGNORES_pathloadmeter2 = (root + funname2);        \
-    RE::GFxValue    INVOKEARGNORES_arg1;                                      \
-    INVOKEARGNORES_arg1.SetString(argname1);                                  \
-    RE::GFxValue    INVOKEARGNORES_arg2;                                      \
-    INVOKEARGNORES_arg2.SetString(argname2);                                  \
+    #define INVOKEARGNORES2(root,hudname,argname1,argname2,funname1,funname2)   \
+    INVOKESTART                                                                 \
+    std::string     INVOKEARGNORES_pathloadmeter1 = (root + funname1);          \
+    std::string     INVOKEARGNORES_pathloadmeter2 = (root + funname2);          \
+    RE::GFxValue    INVOKEARGNORES_arg1;                                        \
+    INVOKEARGNORES_arg1.SetString(argname1);                                    \
+    RE::GFxValue    INVOKEARGNORES_arg2;                                        \
+    INVOKEARGNORES_arg2.SetString(argname2);                                    \
     hudname->InvokeNoReturn(INVOKEARGNORES_pathloadmeter1.c_str(),&INVOKEARGNORES_arg1,1); \
     _UpdateWidget(hudname);                                                                \
     hudname->InvokeNoReturn(INVOKEARGNORES_pathloadmeter2.c_str(),&INVOKEARGNORES_arg2,1); \
-    _UpdateWidget(hudname);                                                   \
-    g_mutex.unlock();
+    _UpdateWidget(hudname);                                                     \
+    INVOKEEND                                                                   \
+    SKSELOG("INVOKEARGNORES2")
 
     #define VALIDATEID(id,retvalue) \
     if (id < 1) {                   \
-        ERRORLOG("ERROR: id == -1 => skipping function call") \
+        /*ERRORLOG("ERROR: id == -1 => skipping function call")*/  \
         return retvalue;            \
     }
 
@@ -102,7 +119,7 @@ namespace IWW
     int LoadMeter(PAPYRUSFUNCHANDLE, std::string a_root, int a_xpos, int a_ypos, bool a_visible);
     int LoadText(PAPYRUSFUNCHANDLE, std::string a_root, std::string a_text, std::string a_font, int a_size, int a_xpos, int a_ypos, bool a_visible);
     int LoadWidget(PAPYRUSFUNCHANDLE, std::string a_root, std::string a_filename, int a_xpos, int a_ypos, bool a_visible);
-
+    
     //all
     void SetPos(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_xpos, int a_ypos);
     void SetSize(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_height, int a_width);

@@ -36,7 +36,7 @@ void IWW::Reset(PAPYRUSFUNCHANDLE, std::string a_root)
     RE::GFxMovieView* loc_view = g_hudmenu;
     if (loc_view == nullptr) 
     {
-        ERRORLOG("Reset({},{}) - ERROR - CAN'T LOAD UI!!",a_root,loc_argstr) //logging
+        ERRORLOG("Reset({}) - ERROR - CAN'T LOAD UI!!",a_root) //logging
         return;
     }
 

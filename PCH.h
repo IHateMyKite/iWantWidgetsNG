@@ -14,13 +14,17 @@ using namespace std::literals;
 
 #define ROUND(x) std::floor(static_cast<float>(x + 0.5f))
 
-//1=ON,0=OFF
-#define LOGGING 0
+// 2=TRACE,1=ERROR,0=OFF
+#define LOGGING 0  
 
 #if(LOGGING > 0)
     #include <spdlog/sinks/basic_file_sink.h>
-    #define SKSELOG(...) {SKSE::log::info(__VA_ARGS__);}
-    #define ERRORLOG(...) {SKSE::log::info(__VA_ARGS__);}
+    #define ERRORLOG(...) { SKSE::log::info(__VA_ARGS__); }
+    #if (LOGGING > 1)
+        #define SKSELOG(...) { SKSE::log::info(__VA_ARGS__); }
+    #else
+        #define SKSELOG(...) {}
+    #endif
 #else
     #define SKSELOG(...) {}
     #define ERRORLOG(...) {}

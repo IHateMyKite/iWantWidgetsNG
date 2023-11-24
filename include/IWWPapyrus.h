@@ -1,4 +1,5 @@
 #pragma once
+#include <IWWConfig.h>
 
 namespace IWW
 {

@@ -5,6 +5,7 @@
     "dependencies": [
         "commonlibsse-ng",
         "boost-algorithm",
-        "boost-atomic"
+        "boost-atomic",
+        "boost-property-tree"
     ]
 }

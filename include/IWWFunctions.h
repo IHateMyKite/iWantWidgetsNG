@@ -30,73 +30,36 @@ namespace IWW
         else return std::string("");
     }
 
-    #define INVOKESTART             \
-        {                           \
-            LOG("INVOKESTART")      \
-            g_mutex.lock();         \
+    class Spinlock
+    {
+    public:
+        void Lock()
+        {
+            while(_state){int i = 0; i++;} 
+            _state = true;
         }
-
-    #define INVOKEEND               \
-        {                           \
-            LOG("INVOKEEND")        \
-            g_mutex.unlock();       \
+        void Unlock()
+        {
+            _state = false;
         }
+    private:
+        bool _state = false;
+    };
 
-    #if (USETASK == 1)
-        #define INVOKEARGNORES(root,hudname,argname,funname)                            \
-        std::function<void()> INVOKEARGNORES_task = std::bind(INVOKE_fun,root,argname,funname); \
-        SKSE::GetTaskInterface()->AddUITask(INVOKEARGNORES_task);
-    #else
-        #define INVOKEARGNORES(root,hudname,argname,funname)                        \
-        INVOKE_fun(root,argname,funname);
-    #endif
+    extern Spinlock g_spinlock;
 
-    #if (USETASK == 1)
-        #define INVOKENOARGNORES(root,hudname,funname)                                  \
-        std::function<void()> INVOKENOARGNORES_task = std::bind(INVOKE_fun,root,"",funname); \
-        SKSE::GetTaskInterface()->AddUITask(INVOKENOARGNORES_task);
-    #else
-        #define INVOKENOARGNORES(root,hudname,funname)                                  \
-        INVOKE_fun(root,"",funname);
-    #endif
+    #define INVOKESTART g_spinlock.Lock();
+    #define INVOKEEND g_spinlock.Unlock();
 
-    #if (USETASK == 1)
-        #define INVOKEARGNORES2(root,hudname,argname1,argname2,funname1,funname2)       \
-        std::function<void()> INVOKEARGNORES2_task = std::bind(INVOKE2_fun,root,argname1,argname2,funname1,funname2); \
-        SKSE::GetTaskInterface()->AddUITask(INVOKEARGNORES2_task);
-    #else
-        #define INVOKEARGNORES2(root,hudname,argname1,argname2,funname1,funname2)       \
-        INVOKE2_fun(root,argname1,argname2,funname1,funname2);
-    #endif
+    #define INVOKEARGNORES(root,argname,funname) INVOKE_fun(root,argname,funname);
 
-    #define INVOKEARGNORESRESET(root,hudname,argname,funname)                                               \
-    INVOKESTART                                                                                             \
-    std::string     INVOKEARGNORESRESET_path = (root + funname);                                            \
-    RE::GFxValue    INVOKEARGNORESRESET_arg;                                                                \
-    INVOKEARGNORESRESET_arg.SetString(argname);                                                             \
-    hudname->Invoke(INVOKEARGNORESRESET_path.c_str(),NULL,&INVOKEARGNORESRESET_arg,1);                      \
-    _UpdateWidget(hudname);                                                                                 \
-    RE::GFxValue INVOKEARGNORESRESET_message;                                                               \
-    std::string INVOKEARGNORESRESET_pathresetoutput = (a_root + "._getOutputMessage");                      \
-    hudname->Invoke(INVOKEARGNORESRESET_pathresetoutput.c_str(),&INVOKEARGNORESRESET_message,NULL,0);       \
-    _UpdateWidget(hudname);                                                                                 \
-    INVOKEEND                                                                                               \
-    LOG("INVOKEARGNORESRESET")
+    #define INVOKENOARGNORES(root,funname) INVOKE_fun(root,"",funname);
 
-    #define INVOKEARGRESET(root,hudname,argname,resname,funname)                                \
-    INVOKESTART                                                                                 \
-    std::string     INVOKEARGRESET_path = (root + funname);                                     \
-    RE::GFxValue    INVOKEARGRESET_arg;                                                         \
-    RE::GFxValue    resname;                                                                    \
-    INVOKEARGRESET_arg.SetString(argname);                                                      \
-    hudname->Invoke(INVOKEARGRESET_path.c_str(),&resname,&INVOKEARGRESET_arg,1);                \
-    _UpdateWidget(hudname);                                                                     \
-    RE::GFxValue INVOKEARGRESET_message;                                                        \
-    std::string INVOKEARGRESET_pathresetoutput = (a_root + "._getOutputMessage");               \
-    hudname->Invoke(INVOKEARGRESET_pathresetoutput.c_str(),&INVOKEARGRESET_message,NULL,0);     \
-    _UpdateWidget(hudname);                                                                     \
-    INVOKEEND                                                                                   \
-    LOG("INVOKEARGRESET")
+    #define INVOKEARGNORES2(root,argname1,argname2,funname1,funname2) INVOKE2_fun(root,argname1,argname2,funname1,funname2);
+
+    #define INVOKEARGNORESRESET(root,argname,funname) INVOKERES_fun(root,argname,funname);
+
+    #define INVOKEARGRESET(root,argname,funname) INVOKERES_fun(root,argname,funname);
 
     #define VALIDATEID(id,retvalue) \
     if (id < 1) {                   \
@@ -104,70 +67,9 @@ namespace IWW
         return retvalue;            \
     }
 
-    inline void INVOKE2_fun(std::string a_root,std::string a_arg1, std::string a_arg2, std::string a_fun1, std::string a_fun2)
-    {        
-        INVOKESTART 
-
-        const std::string     loc_pathloadmeter1 = (a_root + a_fun1);
-        const std::string     loc_pathloadmeter2 = (a_root + a_fun2);
-
-        RE::GFxValue    loc_arg1;
-        RE::GFxValue*   loc_argptr1 = NULL;
-        uint32_t        loc_argnum1 = 0;
-
-        if (a_arg1 != "")
-        {
-            loc_arg1.SetString(a_arg1);
-            loc_argptr1 = &loc_arg1;
-            loc_argnum1 += 2;
-        }
-        
-        g_hudmenu->InvokeNoReturn(loc_pathloadmeter1.c_str(),loc_argptr1,loc_argnum1);
-        _UpdateWidget(g_hudmenu);
-
-        RE::GFxValue    loc_arg2;
-        RE::GFxValue*   loc_argptr2 = NULL;
-        uint32_t        loc_argnum2 = 0;
-
-        if (a_arg2 != "")
-        {
-            loc_arg2.SetString(a_arg2);
-            loc_argptr2 = &loc_arg2;
-            loc_argnum2 += 1;
-        }
-
-        g_hudmenu->InvokeNoReturn(loc_pathloadmeter2.c_str(),loc_argptr2,loc_argnum2);
-        _UpdateWidget(g_hudmenu);
-
-        INVOKEEND
-        LOG("INVOKE2_fun")
-    }
-
-    inline void INVOKE_fun(std::string a_root,std::string a_arg, std::string a_fun)
-    {        
-        INVOKESTART 
-        const std::string loc_pathloadmeter = (a_root + a_fun);
-
-        RE::GFxValue*   loc_argptr = NULL;
-        RE::GFxValue    loc_arg;
-        uint32_t        loc_argnum = 0;
-
-        if (a_arg != "")
-        {
-            loc_arg.SetString(a_arg);
-            loc_argptr  = &loc_arg;
-            loc_argnum += 1;
-        }
-        
-        LOG("INVOKING")
-        g_hudmenu->InvokeNoReturn(loc_pathloadmeter.c_str(),loc_argptr,loc_argnum);
-
-        LOG("UPDATING")
-        _UpdateWidget(g_hudmenu);
-
-        INVOKEEND
-        LOG("INVOKE_fun") 
-    }
+    inline void INVOKE2_fun(std::string a_root,std::string a_arg1, std::string a_arg2, std::string a_fun1, std::string a_fun2);
+    inline void INVOKE_fun(std::string a_root,std::string a_arg, std::string a_fun);
+    inline RE::GFxValue INVOKERES_fun(std::string a_root,std::string a_arg, std::string a_fun);
 
     template<auto N>
     std::string _SelializeArray(const std::array<std::string,N> & a_array);

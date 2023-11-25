@@ -3,9 +3,7 @@
 
 bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
 {
-    //if (!IWW::Config::GetSingleton()->IsInstalled())IWW::Config::GetSingleton()->Update();
-
-    bool loc_unhook = IWW::Config::GetSingleton()->CFG_PAPYUNHOOK;
+    const bool loc_unhook = IWW::Config::GetSingleton()->CFG_PAPYUNHOOK;
 
     #if (PAPYRUSUNHOOKFPSALL == 1)
         #define REGISTERPAPYRUSFUNC(name,unhook) {vm->RegisterFunction(#name, "iwant_widgets_native", IWW::name,loc_unhook);}
@@ -13,13 +11,13 @@ bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
         #define REGISTERPAPYRUSFUNC(name,unhook) {vm->RegisterFunction(#name, "iwant_widgets_native", IWW::name,unhook && loc_unhook);}
     #endif
 
-    REGISTERPAPYRUSFUNC(LoadMeter,true)
-    REGISTERPAPYRUSFUNC(LoadText,true)
-    REGISTERPAPYRUSFUNC(LoadWidget,true)
+    REGISTERPAPYRUSFUNC(LoadMeter,false)
+    REGISTERPAPYRUSFUNC(LoadText,false)
+    REGISTERPAPYRUSFUNC(LoadWidget,false)
 
     REGISTERPAPYRUSFUNC(SetPos,true)
     REGISTERPAPYRUSFUNC(SetSize,true)
-    REGISTERPAPYRUSFUNC(GetSize,true)
+    REGISTERPAPYRUSFUNC(GetSize,false)
     REGISTERPAPYRUSFUNC(SetZoom,true)
     REGISTERPAPYRUSFUNC(SetVisible,true)
     REGISTERPAPYRUSFUNC(SetRotation,true)

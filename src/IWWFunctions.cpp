@@ -3,6 +3,7 @@
 std::mutex          IWW::g_mutex;
 RE::GPtr<RE::GFxMovieView>   IWW::g_hudmenu = nullptr;
 RE::UI*             IWW::g_ui           = nullptr;
+IWW::Spinlock       IWW::g_spinlock;
 
 std::atomic_bool    IWW::g_reseting     = true;
 
@@ -14,8 +15,7 @@ void IWW::OnMessageReceived(SKSE::MessagingInterface::Message* a_msg)
         {
         case SKSE::MessagingInterface::kDataLoaded:
             break;
-        case SKSE::MessagingInterface::kPostPostLoad:
-            LOG("kPostPostLoad")
+        case SKSE::MessagingInterface::kPostLoad:
             IWW::Config::GetSingleton()->Update();
             break;
         case SKSE::MessagingInterface::kPreLoadGame:    //set reload flag, so we can prevent in papyrus calls of native function untill view get reset by invoking _reset
@@ -44,7 +44,7 @@ void IWW::Reset(PAPYRUSFUNCHANDLE, std::string a_root)
         return;
     }
 
-    INVOKENOARGNORES(a_root,g_hudmenu,"._reset")
+    INVOKENOARGNORES(a_root,"._reset")
 
     LOG("Reset({}) done",a_root) //logging
 
@@ -68,9 +68,9 @@ int IWW::LoadMeter(PAPYRUSFUNCHANDLE, std::string a_root, int a_xpos, int a_ypos
         return -1; 
     }
 
-    INVOKEARGRESET(a_root,g_hudmenu,loc_argstr,loc_res,".loadMeter")
+    auto loc_res = INVOKEARGRESET(a_root,loc_argstr,".loadMeter")
 
-    LOG("LoadMeter({},{}) - New ID = {}",a_root,loc_argstr,loc_res.GetNumber()) //logging
+    LOG("LoadMeter({},{}) - New ID = {}",a_root,loc_argstr,ROUND(loc_res.GetNumber())) //logging
 
     return ROUND(loc_res.GetNumber());
 }
@@ -94,7 +94,7 @@ int IWW::LoadText(PAPYRUSFUNCHANDLE, std::string a_root, std::string a_text, std
         return -1; 
     }
 
-    INVOKEARGRESET(a_root,g_hudmenu,loc_argstr,loc_res,".loadText")
+    auto loc_res = INVOKEARGRESET(a_root,loc_argstr,".loadText")
 
     LOG("LoadText({},{}) - New ID = {}",a_root,loc_argstr,loc_res.GetNumber()) //logging
 
@@ -118,7 +118,7 @@ int IWW::LoadWidget(PAPYRUSFUNCHANDLE, std::string a_root, std::string a_filenam
         return -1; 
     }
 
-    INVOKEARGRESET(a_root,g_hudmenu,loc_argstr,loc_res,".loadWidget")
+    auto loc_res = INVOKEARGRESET(a_root,loc_argstr,".loadWidget")
 
     LOG("loadWidget({},{}) - New ID = {}",a_root,loc_argstr,loc_res.GetNumber()) //logging
 
@@ -142,7 +142,7 @@ void IWW::SetPos(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_xpos, in
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES2(a_root,g_hudmenu,loc_argstr1,loc_argstr2,".setXPos",".setYPos")
+    INVOKEARGNORES2(a_root,loc_argstr1,loc_argstr2,".setXPos",".setYPos")
 }
 
 void IWW::SetSize(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_height, int a_width)
@@ -162,7 +162,7 @@ void IWW::SetSize(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_height,
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES2(a_root,g_hudmenu,loc_argstr1,loc_argstr2,".setHeight",".setWidth")
+    INVOKEARGNORES2(a_root,loc_argstr1,loc_argstr2,".setHeight",".setWidth")
 }
 
 int IWW::GetSize(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_type)
@@ -177,13 +177,13 @@ int IWW::GetSize(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_type)
 
     if (a_type == 0) 
     {
-        INVOKEARGNORESRESET(a_root,g_hudmenu,loc_argstr,".getXsize")
-        return ROUND(std::stoi(INVOKEARGNORESRESET_message.GetString()));
+        auto loc_res = INVOKEARGNORESRESET(a_root,loc_argstr,".getXsize")
+        return ROUND(std::stoi(loc_res.GetString()));
     }
     else 
     {
-        INVOKEARGNORESRESET(a_root,g_hudmenu,loc_argstr,".getYsize")
-        return ROUND(std::stoi(INVOKEARGNORESRESET_message.GetString()));
+        auto loc_res = INVOKEARGNORESRESET(a_root,loc_argstr,".getYsize")
+        return ROUND(std::stoi(loc_res.GetString()));
     }
 }
 
@@ -204,7 +204,7 @@ void IWW::SetZoom(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_xscale,
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES2(a_root,g_hudmenu,loc_argstr1,loc_argstr2,".setXScale",".setYScale")
+    INVOKEARGNORES2(a_root,loc_argstr1,loc_argstr2,".setXScale",".setYScale")
 }
 
 void IWW::SetVisible(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_visible)
@@ -217,8 +217,7 @@ void IWW::SetVisible(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_visi
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setVisible")
-    
+    INVOKEARGNORES(a_root,loc_argstr,".setVisible")
 }
 
 void IWW::SetRotation(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_rotation)
@@ -231,7 +230,7 @@ void IWW::SetRotation(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_rot
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setRotation")
+    INVOKEARGNORES(a_root,loc_argstr,".setRotation")
 }
 
 void IWW::SetTransparency(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_alpha)
@@ -244,7 +243,7 @@ void IWW::SetTransparency(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setAlpha")
+    INVOKEARGNORES(a_root,loc_argstr,".setAlpha")
 }
 
 void IWW::SetRGB(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_r, int a_g, int a_b)
@@ -260,7 +259,7 @@ void IWW::SetRGB(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_r, int a
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setColor")
+    INVOKEARGNORES(a_root,loc_argstr,".setColor")
 }
 
 void IWW::Destroy(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
@@ -274,7 +273,7 @@ void IWW::Destroy(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
     VALIDATEID(a_id,)
     
     if (g_hudmenu == nullptr) return;
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".destroy")
+    INVOKEARGNORES(a_root,loc_argstr,".destroy")
 }
 
 void IWW::SetMeterPercent(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_perc)
@@ -287,7 +286,7 @@ void IWW::SetMeterPercent(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setMeterPercent")
+    INVOKEARGNORES(a_root,loc_argstr,".setMeterPercent")
 }
 
 void IWW::SetMeterFillDirection(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, std::string a_direction)
@@ -300,7 +299,7 @@ void IWW::SetMeterFillDirection(PAPYRUSFUNCHANDLE, std::string a_root, int a_id,
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setMeterFillDirection")
+    INVOKEARGNORES(a_root,loc_argstr,".setMeterFillDirection")
 }
 
 void IWW::SendToBack(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
@@ -313,7 +312,7 @@ void IWW::SendToBack(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".sendToBack")
+    INVOKEARGNORES(a_root,loc_argstr,".sendToBack")
 }
 
 void IWW::SendToFront(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
@@ -326,7 +325,7 @@ void IWW::SendToFront(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".sendToFront")
+    INVOKEARGNORES(a_root,loc_argstr,".sendToFront")
 }
 
 void IWW::DoMeterFlash(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
@@ -339,7 +338,7 @@ void IWW::DoMeterFlash(PAPYRUSFUNCHANDLE, std::string a_root, int a_id)
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".doMeterFlash")
+    INVOKEARGNORES(a_root,loc_argstr,".doMeterFlash")
 }
 
 void IWW::SetMeterRGB(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_lightR, int a_lightG, int a_lightB, int a_darkR, int a_darkG, int a_darkB, int a_flashR, int a_flashG, int a_flashB)
@@ -357,7 +356,7 @@ void IWW::SetMeterRGB(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_lig
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setMeterColors")
+    INVOKEARGNORES(a_root,loc_argstr,".setMeterColors")
 }
 
 void IWW::SetText(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, std::string a_text)
@@ -373,7 +372,7 @@ void IWW::SetText(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, std::string a
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".setText")
+    INVOKEARGNORES(a_root,loc_argstr,".setText")
 }
 
 void IWW::AppendText(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, std::string a_text)
@@ -389,7 +388,7 @@ void IWW::AppendText(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, std::strin
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".appendText")
+    INVOKEARGNORES(a_root,loc_argstr,".appendText")
 }
 
 void IWW::SwapDepths(PAPYRUSFUNCHANDLE, std::string a_root, int a_id1, int a_id2)
@@ -406,7 +405,7 @@ void IWW::SwapDepths(PAPYRUSFUNCHANDLE, std::string a_root, int a_id1, int a_id2
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".swapDepths")
+    INVOKEARGNORES(a_root,loc_argstr,".swapDepths")
 }
 
 void IWW::DrawShapeLine(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int> a_list, int a_XPos, int a_YPos, int a_XChange, int a_YChange, bool a_skipInvisible, bool a_skipAlpha0)
@@ -429,7 +428,7 @@ void IWW::DrawShapeLine(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int> 
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".drawLine")
+    INVOKEARGNORES(a_root,loc_argstr,".drawLine")
 }
 
 void IWW::DrawShapeCircle(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int> a_list, int a_XPos, int a_YPos, int a_Radius, int a_StartAngle, int a_DegreeChange, bool a_skipInvisible, bool a_skipAlpha0, bool a_AutoSpace)
@@ -454,7 +453,7 @@ void IWW::DrawShapeCircle(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".drawCircle")
+    INVOKEARGNORES(a_root,loc_argstr,".drawCircle")
 }
 
 void IWW::DrawShapeOrbit(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int> a_list, int a_XPos, int a_YPos, int a_Radius, int a_StartAngle, int a_DegreeChange, bool a_skipInvisible, bool a_skipAlpha0, bool a_AutoSpace)
@@ -479,7 +478,7 @@ void IWW::DrawShapeOrbit(PAPYRUSFUNCHANDLE, std::string a_root, std::vector<int>
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".drawOrbit")
+    INVOKEARGNORES(a_root,loc_argstr,".drawOrbit")
 }
 
 void IWW::DoTransitionByTime(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_targetValue, float a_seconds, std::string a_targetAttribute, std::string a_easingClass, std::string a_easingMethod, float a_delay)
@@ -536,13 +535,14 @@ void IWW::DoTransitionByTime(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, in
 
     if (g_hudmenu == nullptr) return;
 
-    INVOKEARGNORES(a_root,g_hudmenu,loc_argstr,".doTransition")
+    INVOKEARGNORES(a_root,loc_argstr,".doTransition")
 }
 
 void IWW::_UpdateWidget(RE::GPtr<RE::GFxMovieView> a_view)
 {
     //update by very small time so internal AS vars are updated
-    if (a_view != nullptr) a_view->Advance(0.0f,0);
+    if (a_view.get() != nullptr) a_view->Advance(0.0001f);
+    else ERROR("Cant update movie because it is none")
 }
 
 inline bool IWW::_UpdateHud()
@@ -567,11 +567,182 @@ inline bool IWW::_UpdateHud()
     RE::GPtr<RE::GFxMovieView> loc_movie = loc_hudmenu->uiMovie;
     CHECKHUDERROR(loc_movie.get(),nullptr,"Failed getting hud - loc_movie => null")
 
-    g_hudmenu = loc_movie;
+    g_hudmenu = loc_hudmenu->uiMovie;
 
     LOG("HUD Loaded!")
 
     #undef CHECKHUDERROR
 
     return true;
+}
+
+void IWW::INVOKE2_fun(std::string a_root, std::string a_arg1, std::string a_arg2, std::string a_fun1, std::string a_fun2)
+{
+    if (IWW::Config::GetSingleton()->CFG_USETASK)
+    {
+        SKSE::GetTaskInterface()->AddUITask([a_root,a_arg1,a_arg2,a_fun1,a_fun2]
+        {
+            LOG("INVOKE2_fun 1 start")
+            INVOKESTART 
+            const std::string     loc_pathloadmeter1 = (a_root + a_fun1);
+            RE::GFxValue    loc_arg1;
+            RE::GFxValue*   loc_argptr1 = NULL;
+            uint32_t        loc_argnum1 = 0;
+
+            if (a_arg1 != "")
+            {
+                loc_arg1.SetString(a_arg1);
+                loc_argptr1 = &loc_arg1;
+                loc_argnum1 += 2;
+            }
+        
+            g_hudmenu->InvokeNoReturn(loc_pathloadmeter1.c_str(),loc_argptr1,loc_argnum1);
+            _UpdateWidget(g_hudmenu);
+
+            INVOKEEND
+            LOG("INVOKE2_fun 1 end")
+        });
+
+        SKSE::GetTaskInterface()->AddUITask([a_root,a_arg1,a_arg2,a_fun1,a_fun2]
+        {
+            LOG("INVOKE2_fun 2 start")
+            INVOKESTART
+            const std::string     loc_pathloadmeter2 = (a_root + a_fun2);
+            RE::GFxValue    loc_arg2;
+            RE::GFxValue*   loc_argptr2 = NULL;
+            uint32_t        loc_argnum2 = 0;
+
+            if (a_arg2 != "")
+            {
+                loc_arg2.SetString(a_arg2);
+                loc_argptr2 = &loc_arg2;
+                loc_argnum2 += 1;
+            }
+
+            g_hudmenu->InvokeNoReturn(loc_pathloadmeter2.c_str(),loc_argptr2,loc_argnum2);
+            _UpdateWidget(g_hudmenu);
+
+            INVOKEEND
+            LOG("INVOKE2_fun 2 end")
+        });
+    }
+    else
+    {
+        LOG("INVOKE2_fun start")
+        INVOKESTART 
+        const std::string     loc_pathloadmeter1 = (a_root + a_fun1);
+        const std::string     loc_pathloadmeter2 = (a_root + a_fun2);
+
+        RE::GFxValue    loc_arg1;
+        RE::GFxValue*   loc_argptr1 = NULL;
+        uint32_t        loc_argnum1 = 0;
+
+        if (a_arg1 != "")
+        {
+            loc_arg1.SetString(a_arg1);
+            loc_argptr1 = &loc_arg1;
+            loc_argnum1 += 2;
+        }
+        
+        g_hudmenu->InvokeNoReturn(loc_pathloadmeter1.c_str(),loc_argptr1,loc_argnum1);
+        _UpdateWidget(g_hudmenu);
+
+        RE::GFxValue    loc_arg2;
+        RE::GFxValue*   loc_argptr2 = NULL;
+        uint32_t        loc_argnum2 = 0;
+
+        if (a_arg2 != "")
+        {
+            loc_arg2.SetString(a_arg2);
+            loc_argptr2 = &loc_arg2;
+            loc_argnum2 += 1;
+        }
+
+        g_hudmenu->InvokeNoReturn(loc_pathloadmeter2.c_str(),loc_argptr2,loc_argnum2);
+        _UpdateWidget(g_hudmenu);
+
+        INVOKEEND
+        LOG("INVOKE2_fun end")
+    }
+}
+
+void IWW::INVOKE_fun(std::string a_root, std::string a_arg, std::string a_fun)
+{
+    if (IWW::Config::GetSingleton()->CFG_USETASK)
+    {
+        SKSE::GetTaskInterface()->AddUITask([a_root,a_arg,a_fun]
+        {
+            LOG("INVOKE_fun start")
+            INVOKESTART
+            const std::string loc_pathloadmeter = (a_root + a_fun);
+            RE::GFxValue*   loc_argptr = NULL;
+            RE::GFxValue    loc_arg;
+            uint32_t        loc_argnum = 0;
+
+            if (a_arg != "")
+            {
+                loc_arg.SetString(a_arg);
+                loc_argptr  = &loc_arg;
+                loc_argnum += 1;
+            }
+
+            g_hudmenu->InvokeNoReturn(loc_pathloadmeter.c_str(),loc_argptr,loc_argnum);
+            _UpdateWidget(g_hudmenu); 
+            INVOKEEND
+            LOG("INVOKE_fun end")
+        });
+    }
+    else
+    {
+        INVOKESTART
+        const std::string loc_pathloadmeter = (a_root + a_fun);
+        RE::GFxValue*   loc_argptr = NULL;
+        RE::GFxValue    loc_arg;
+        uint32_t        loc_argnum = 0;
+
+        if (a_arg != "")
+        {
+            loc_arg.SetString(a_arg);
+            loc_argptr  = &loc_arg;
+            loc_argnum += 1;
+        }
+
+        g_hudmenu->InvokeNoReturn(loc_pathloadmeter.c_str(),loc_argptr,loc_argnum);
+        _UpdateWidget(g_hudmenu);
+        LOG("INVOKE_fun") 
+        INVOKEEND
+    }
+}
+
+RE::GFxValue IWW::INVOKERES_fun(std::string a_root, std::string a_arg, std::string a_fun)
+{
+    {
+        LOG("INVOKERES_fun start")
+        INVOKESTART 
+        const std::string loc_pathloadmeter = (a_root + a_fun);
+
+        RE::GFxValue*   loc_argptr = NULL;
+        RE::GFxValue    loc_arg;
+        RE::GFxValue    loc_res;
+        uint32_t        loc_argnum = 0;
+
+        if (a_arg != "")
+        {
+            loc_arg.SetString(a_arg);
+            loc_argptr  = &loc_arg;
+            loc_argnum += 1;
+        }
+        
+        g_hudmenu->Invoke(loc_pathloadmeter.c_str(),&loc_res,loc_argptr,loc_argnum);
+        _UpdateWidget(g_hudmenu);
+
+        RE::GFxValue loc_tmpres; 
+        const std::string loc_pathresetoutput = (a_root + "._getOutputMessage");
+        g_hudmenu->Invoke(loc_pathresetoutput.c_str(),&loc_tmpres,NULL,0);
+        _UpdateWidget(g_hudmenu);
+
+        INVOKEEND
+        LOG("INVOKERES_fun end - {}",ROUND(loc_res.GetNumber()))
+        return loc_res;
+    }
 }

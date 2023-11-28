@@ -16,7 +16,7 @@ void IWW::OnMessageReceived(SKSE::MessagingInterface::Message* a_msg)
         case SKSE::MessagingInterface::kDataLoaded:
             break;
         case SKSE::MessagingInterface::kPostLoad:
-            IWW::Config::GetSingleton()->Update();
+            IWW::Config::GetSingleton()->Setup();
             break;
         case SKSE::MessagingInterface::kPreLoadGame:    //set reload flag, so we can prevent in papyrus calls of native function untill view get reset by invoking _reset
             g_reseting = true;
@@ -578,7 +578,7 @@ inline bool IWW::_UpdateHud()
 
 void IWW::INVOKE2_fun(std::string a_root, std::string a_arg1, std::string a_arg2, std::string a_fun1, std::string a_fun2)
 {
-    if (IWW::Config::GetSingleton()->CFG_USETASK)
+    if (IWW::Config::GetSingleton()->GetVariable<bool>("General.UseUITask",true))
     {
         SKSE::GetTaskInterface()->AddUITask([a_root,a_arg1,a_arg2,a_fun1,a_fun2]
         {
@@ -668,7 +668,7 @@ void IWW::INVOKE2_fun(std::string a_root, std::string a_arg1, std::string a_arg2
 
 void IWW::INVOKE_fun(std::string a_root, std::string a_arg, std::string a_fun)
 {
-    if (IWW::Config::GetSingleton()->CFG_USETASK)
+    if (IWW::Config::GetSingleton()->GetVariable<bool>("General.UseUITask",true))
     {
         SKSE::GetTaskInterface()->AddUITask([a_root,a_arg,a_fun]
         {

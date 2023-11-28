@@ -21,8 +21,9 @@ using namespace std::literals;
 
 #if(LOGGING != 0)
     #include <spdlog/sinks/basic_file_sink.h>
-    #define LOG(...)    {if (IWW::Config::GetSingleton()->CFG_LOGGING >= 2) SKSE::log::info(__VA_ARGS__);}
-    #define ERROR(...)  {if (IWW::Config::GetSingleton()->CFG_LOGGING >= 1) SKSE::log::error(__VA_ARGS__);}
+    #define LOG(...)    {if (IWW::Config::GetSingleton()->GetVariable<int>("General.Logging",1) >= 2) SKSE::log::info(__VA_ARGS__);}
+    #define WARN(...)   {if (IWW::Config::GetSingleton()->GetVariable<int>("General.Logging",1) >= 1) SKSE::log::warn(__VA_ARGS__);}
+    #define ERROR(...)  {SKSE::log::error(__VA_ARGS__);}
 #else
     #define LOG(...) {}
     #define ERROR(...) {}

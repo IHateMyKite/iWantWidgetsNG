@@ -3,7 +3,7 @@
 
 bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
 {
-    const bool loc_unhook = IWW::Config::GetSingleton()->CFG_PAPYUNHOOK;
+    const bool loc_unhook = IWW::Config::GetSingleton()->GetVariable<bool>("General.UnhookPapyrus",true);
 
     #if (PAPYRUSUNHOOKFPSALL == 1)
         #define REGISTERPAPYRUSFUNC(name,unhook) {vm->RegisterFunction(#name, "iwant_widgets_native", IWW::name,loc_unhook);}

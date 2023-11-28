@@ -63,7 +63,7 @@ namespace IWW
 
     #define VALIDATEID(id,retvalue) \
     if (id < 1) {                   \
-        /*ERROR("ERROR: id == -1 => skipping function call")*/  \
+        WARN("Invalid id passed ({}) => skipping function call",id)\
         return retvalue;            \
     }
 

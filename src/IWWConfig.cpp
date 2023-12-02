@@ -53,6 +53,7 @@ namespace IWW
     T Config::GetVariable(std::string a_name, T a_def) const
     {
         if (!_ready) return a_def;
+
         void* loc_cres = _catche[a_name];
         if (loc_cres != nullptr) return *(T*)loc_cres;
 

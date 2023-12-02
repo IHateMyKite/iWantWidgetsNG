@@ -24,9 +24,12 @@ using namespace std::literals;
     #define LOG(...)    {if (IWW::Config::GetSingleton()->GetVariable<int>("General.Logging",1) >= 2) SKSE::log::info(__VA_ARGS__);}
     #define WARN(...)   {if (IWW::Config::GetSingleton()->GetVariable<int>("General.Logging",1) >= 1) SKSE::log::warn(__VA_ARGS__);}
     #define ERROR(...)  {SKSE::log::error(__VA_ARGS__);}
+    #define DEBUG(...)  {SKSE::log::debug(__VA_ARGS__);}
 #else
-    #define LOG(...) {}
-    #define ERROR(...) {}
+    #define LOG(...)  {}
+    #define ERROR(...){}
+    #define ERROR(...){}
+    #define DEBUG(...){}
 #endif
 
 #define SINGLETONHEADER(cname)                          \

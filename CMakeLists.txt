@@ -5,15 +5,7 @@ cmake_minimum_required(VERSION 3.21)
 # Set your project name. This will be the name of your SKSE .dll file.
 project(IWantWidgetsNative VERSION 1.2.4 LANGUAGES CXX)
 
-# Otherwise, you can set OUTPUT_FOLDER to any place you'd like :)
-# set(OUTPUT_FOLDER "C:/path/to/any/folder")
-
-# Get the .cpp files from your src/ directory
-# to be passed into add_commonlibsse_plugin
-#
-# This helper automatically finds all of your .cpp files for you
-#
-# Please note: the official recommendation is to list our every .cpp
+# Please note: the official recommendation is to list out every .cpp
 # file individually after SOURCES
 set(source_files ${source_files}
     src/IWWPapyrus.cpp

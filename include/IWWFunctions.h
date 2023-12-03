@@ -19,9 +19,15 @@ namespace IWW
     
         //all
         void SetPos(std::string a_root, int a_id, int a_xpos, int a_ypos);
+        void SetPosX(std::string a_root, int a_id, int a_xpos);
+        void SetPosY(std::string a_root, int a_id, int a_ypos);
         void SetSize(std::string a_root, int a_id, int a_height, int a_width);
+        void SetSizeH(std::string a_root, int a_id, int a_height);
+        void SetSizeW(std::string a_root, int a_id, int a_width);
         int  GetSize(std::string a_root, int a_id, int a_type);
         void SetZoom(std::string a_root, int a_id, int a_xscale, int a_yscale);
+        void SetZoomX(std::string a_root, int a_id, int a_xscale);
+        void SetZoomY(std::string a_root, int a_id, int a_yscale);
         void SetVisible(std::string a_root, int a_id, int a_visible);
         void SetRotation(std::string a_root, int a_id, int a_rotation);
         void SetTransparency(std::string a_root, int a_id, int a_alpha);
@@ -57,11 +63,13 @@ namespace IWW
         void Reset(std::string a_root);
         void SetReseting(bool a_val) {_reseting = a_val;}
         bool IsResetting();
+
+        std::string GetOutput(int a_id,std::string a_def);
     private:
         void _UpdateWidget(RE::GPtr<RE::GFxMovieView> a_view);
         void INVOKE2_fun(std::string a_root,std::string a_arg1, std::string a_arg2, std::string a_fun1, std::string a_fun2);
         void INVOKE_fun(std::string a_root,std::string a_arg, std::string a_fun);
-        RE::GFxValue INVOKERES_fun(std::string a_root,std::string a_arg, std::string a_fun);
+        int  INVOKERES_fun(std::string a_root,std::string a_arg, std::string a_fun);
         template<auto N> std::string _SelializeArray(const std::array<std::string,N> & a_array)
         {
             if (a_array.size() > 0)
@@ -81,13 +89,19 @@ namespace IWW
         RE::UI*                     _ui;
         std::atomic_bool            _reseting;
 
+        uint32_t _outputStackNextID = 0;
+        std::unordered_map<uint32_t,std::string> _outputStack;
+
     };
 
     #define INVOKEARGNORES(root,argname,funname) INVOKE_fun(root,argname,funname);
 
     #define INVOKENOARGNORES(root,funname) INVOKE_fun(root,"",funname);
 
-    #define INVOKEARGNORES2(root,argname1,argname2,funname1,funname2) INVOKE2_fun(root,argname1,argname2,funname1,funname2);
+    //#define INVOKEARGNORES2(root,argname1,argname2,funname1,funname2) INVOKE2_fun(root,argname1,argname2,funname1,funname2);
+
+    #define INVOKEARGNORES2(root,argname1,argname2,funname1,funname2)       INVOKE_fun(root,argname1,funname2); \
+                                                                            INVOKE_fun(root,argname1,funname2);
 
     #define INVOKEARGNORESRESET(root,argname,funname) INVOKERES_fun(root,argname,funname);
 

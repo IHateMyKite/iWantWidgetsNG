@@ -25,9 +25,25 @@ namespace IWW
     {
         return MainFunctions::GetSingleton()->SetPos(a_root,a_id,a_xpos,a_ypos);
     }
+    inline void SetPosX(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_xpos)
+    {
+        return MainFunctions::GetSingleton()->SetPosX(a_root,a_id,a_xpos);
+    }
+    inline void SetPosY(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_ypos)
+    {
+        return MainFunctions::GetSingleton()->SetPosY(a_root,a_id,a_ypos);
+    }
     inline void SetSize(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_height, int a_width)
     {
         return MainFunctions::GetSingleton()->SetSize(a_root,a_id,a_height,a_width);
+    }
+    inline void SetSizeH(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_height)
+    {
+        return MainFunctions::GetSingleton()->SetSizeH(a_root,a_id,a_height);
+    }
+    inline void SetSizeW(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_width)
+    {
+        return MainFunctions::GetSingleton()->SetSizeW(a_root,a_id,a_width);
     }
     inline int  GetSize(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_type)
     {
@@ -36,6 +52,14 @@ namespace IWW
     inline void SetZoom(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_xscale, int a_yscale)
     {
         return MainFunctions::GetSingleton()->SetZoom(a_root,a_id,a_xscale,a_yscale);
+    }
+    inline void SetZoomX(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_xscale)
+    {
+        return MainFunctions::GetSingleton()->SetZoomX(a_root,a_id,a_xscale);
+    }
+    inline void SetZoomY(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_yscale)
+    {
+        return MainFunctions::GetSingleton()->SetZoomY(a_root,a_id,a_yscale);
     }
     inline void SetVisible(PAPYRUSFUNCHANDLE, std::string a_root, int a_id, int a_visible)
     {
@@ -132,5 +156,9 @@ namespace IWW
     inline bool IsResetting(PAPYRUSFUNCHANDLE)
     {
         return MainFunctions::GetSingleton()->IsResetting();
+    }
+    inline std::string GetOutput(PAPYRUSFUNCHANDLE,int a_id,std::string a_def)
+    {
+        return MainFunctions::GetSingleton()->GetOutput(a_id,a_def);
     }
 }

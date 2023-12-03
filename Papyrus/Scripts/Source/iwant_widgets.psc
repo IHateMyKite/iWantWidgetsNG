@@ -14,7 +14,16 @@ EndFunction
 
 Int Function loadWidget(String filename, Int xpos = 10000, Int ypos = 10000, Bool visible = False)
     _waitForReadyToLoad()
-    return iwant_widgets_native.LoadWidget(WidgetRoot,filename,xpos,ypos,visible)
+    
+    int loc_outputid = iwant_widgets_native.LoadWidget(WidgetRoot,filename,xpos,ypos,visible)
+    
+    String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
+    while loc_output == "W8"
+        Utility.waitMenuMode(0.001)
+        loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
+    endwhile
+    
+    return loc_output as Int
 EndFunction
 
 Int Function loadLibraryWidget(String filename, Int xpos = 10000, Int ypos = 10000, Bool visible = False)
@@ -25,12 +34,28 @@ EndFunction
 
 Int Function loadText(String displayString, String font = "$EverywhereFont", Int size = 24, Int xpos = 10000, Int ypos = 10000, Bool visible = False)
     _waitForReadyToLoad()
-    return iwant_widgets_native.LoadText(WidgetRoot,displayString,font,size,xpos,ypos,visible)
+    int loc_outputid = iwant_widgets_native.LoadText(WidgetRoot,displayString,font,size,xpos,ypos,visible)
+    
+    String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
+    while loc_output == "W8"
+        Utility.waitMenuMode(0.001)
+        loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
+    endwhile
+    
+    return loc_output as Int
 EndFunction
 
 Int Function loadMeter(Int xpos = 10000, Int ypos = 10000, Bool visible = False)
     _waitForReadyToLoad()
-    return iwant_widgets_native.LoadMeter(WidgetRoot,xpos,ypos,visible)
+    int loc_outputid = iwant_widgets_native.LoadMeter(WidgetRoot,xpos,ypos,visible)
+    
+    String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
+    while loc_output == "W8"
+        Utility.waitMenuMode(0.001)
+        loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
+    endwhile
+    
+    return loc_output as Int
 EndFunction
 
 Function _waitForReadyToLoad(bool abCheckReset = true)
@@ -91,27 +116,47 @@ EndFunction
 
 Function setPos(Int id, Int xpos, Int ypos)
     _waitForReadyToLoad()
-    iwant_widgets_native.setPos(WidgetRoot,id,xpos,ypos)
+    iwant_widgets_native.setPosX(WidgetRoot,id,xpos)
+    iwant_widgets_native.setPosY(WidgetRoot,id,ypos)
+    ;iwant_widgets_native.setPos(WidgetRoot,id,xpos,ypos)
 EndFunction
 
 Function setSize(Int id, Int h, Int w)
     _waitForReadyToLoad()
-    iwant_widgets_native.setSize(WidgetRoot,id,h,w)
+    iwant_widgets_native.setSizeH(WidgetRoot,id,h)
+    iwant_widgets_native.setSizeW(WidgetRoot,id,w)
+    ;iwant_widgets_native.setSize(WidgetRoot,id,h,w)
 EndFunction
 
 Int Function getXsize(Int id)
     _waitForReadyToLoad()
-    return iwant_widgets_native.GetSize(WidgetRoot,id,0)
+    int loc_outputid = iwant_widgets_native.GetSize(WidgetRoot,id,0)
+    
+    String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
+    while loc_output == "W8"
+        Utility.waitMenuMode(0.001)
+        loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
+    endwhile
+    return loc_output as Int
 EndFunction
 
 Int Function getYsize(Int id)
     _waitForReadyToLoad()
-    return iwant_widgets_native.GetSize(WidgetRoot,id,1)
+    int loc_outputid = iwant_widgets_native.GetSize(WidgetRoot,id,1)
+    
+    String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
+    while loc_output == "W8"
+        Utility.waitMenuMode(0.001)
+        loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
+    endwhile
+    return loc_output as Int
 EndFunction
 
 Function setZoom(Int id, Int xscale, Int yscale)
     _waitForReadyToLoad()
-    iwant_widgets_native.SetZoom(WidgetRoot,id,xscale,yscale)
+    iwant_widgets_native.SetZoomX(WidgetRoot,id,xscale)
+    iwant_widgets_native.SetZoomY(WidgetRoot,id,yscale)
+    ;iwant_widgets_native.SetZoom(WidgetRoot,id,xscale,yscale)
 EndFunction
 
 Function setVisible(Int id, Int visible = 1)

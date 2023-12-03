@@ -7,9 +7,15 @@ Int Function LoadWidget(String asRoot,String asFilename, Int aiXpos, Int aiYpos,
 
 ;generic
 Function SetPos(String asRoot, Int aiId, Int aiXpos, Int aiYpos) global native
+Function SetPosX(String asRoot, Int aiId, Int aiXpos) global native
+Function SetPosY(String asRoot, Int aiId, Int aiYpos) global native
 Function SetSize(String asRoot, Int aiId, Int aiH, Int aiW) global native
+Function SetSizeH(String asRoot, Int aiId, Int aiH) global native
+Function SetSizeW(String asRoot, Int aiId, Int aiW) global native
 Int Function GetSize(String asRoot, Int aiId, Int aiType) global native
 Function SetZoom(String asRoot, Int aiId, Int aiScaleX, Int aiScaleY) global native
+Function SetZoomX(String asRoot, Int aiId, Int aiScaleX) global native
+Function SetZoomY(String asRoot, Int aiId, Int aiScaleY) global native
 Function SetVisible(String asRoot, Int aiId, Int aiVisible) global native
 Function SetRotation(String asRoot, Int aiId, Int aiRotation) global native
 Function SetTransparency(String asRoot, Int aiId, Int aiAlpha) global native
@@ -42,3 +48,4 @@ Function DoTransitionByTime(String asRoot, Int aiId, Int aiTargetValue, Float af
 bool Function IsHudReady()              global native
      Function Reset(String asRoot)      global native
 bool Function IsResetting()             global native
+String Function GetOutput(Int aiId, String asDef) global native

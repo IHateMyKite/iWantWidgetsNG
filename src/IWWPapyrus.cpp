@@ -11,14 +11,20 @@ bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
         #define REGISTERPAPYRUSFUNC(name,unhook) {vm->RegisterFunction(#name, "iwant_widgets_native", IWW::name,unhook && loc_unhook);}
     #endif
 
-    REGISTERPAPYRUSFUNC(LoadMeter,false)
-    REGISTERPAPYRUSFUNC(LoadText,false)
-    REGISTERPAPYRUSFUNC(LoadWidget,false)
+    REGISTERPAPYRUSFUNC(LoadMeter,true)
+    REGISTERPAPYRUSFUNC(LoadText,true)
+    REGISTERPAPYRUSFUNC(LoadWidget,true)
 
     REGISTERPAPYRUSFUNC(SetPos,true)
+    REGISTERPAPYRUSFUNC(SetPosX,true)
+    REGISTERPAPYRUSFUNC(SetPosY,true)
     REGISTERPAPYRUSFUNC(SetSize,true)
-    REGISTERPAPYRUSFUNC(GetSize,false)
+    REGISTERPAPYRUSFUNC(SetSizeH,true)
+    REGISTERPAPYRUSFUNC(SetSizeW,true)
+    REGISTERPAPYRUSFUNC(GetSize,true)
     REGISTERPAPYRUSFUNC(SetZoom,true)
+    REGISTERPAPYRUSFUNC(SetZoomX,true)
+    REGISTERPAPYRUSFUNC(SetZoomY,true)
     REGISTERPAPYRUSFUNC(SetVisible,true)
     REGISTERPAPYRUSFUNC(SetRotation,true)
     REGISTERPAPYRUSFUNC(SetTransparency,true)
@@ -45,6 +51,7 @@ bool IWW::RegisterPapyrusFunctions(RE::BSScript::IVirtualMachine* vm)
     REGISTERPAPYRUSFUNC(IsHudReady,true)
     REGISTERPAPYRUSFUNC(Reset,true)
     REGISTERPAPYRUSFUNC(IsResetting,true)
+    REGISTERPAPYRUSFUNC(GetOutput,true)
 
     #undef REGISTERPAPYRUSFUNC
     return true;

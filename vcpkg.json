@@ -1,11 +1,58 @@
 {
-    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
-    "name": "iwantwidgetsng",
-    "version-string": "1.2.6",
-    "dependencies": [
-        "commonlibsse-ng",
-        "boost-algorithm",
-        "boost-property-tree",
-        "boost-lexical-cast"
-    ]
+  "name": "sampleplugin",
+  "version-semver": "0.7.4",
+  "description": "",
+  "license": "GPL-3.0",
+  "dependencies": [
+    "fmt",
+    "directxtk",
+    "rapidcsv",
+    "spdlog",
+    "xbyak",
+    "catch2",
+    "magic-enum",
+    "nlohmann-json",
+    "clib-util",
+    "srell",
+    "vcpkg-boost",
+    "boost-algorithm",
+    "boost-math",
+    "boost-lexical-cast",
+    "boost-property-tree"
+  ],
+  "overrides": [
+      {
+          "name": "fmt",
+          "version": "8.0.1"
+      },
+      {
+          "name": "vcpkg-boost",
+          "version": "2025-03-29"
+      },
+      {
+          "name": "boost-algorithm",
+          "version": "1.86.0"
+      },
+      {
+          "name": "boost-headers",
+          "version": "1.86.0"
+      },
+      {
+          "name": "boost-cmake",
+          "version": "1.86.0"
+      },
+      {
+          "name": "boost-math",
+          "version": "1.86.0"
+      },
+      {
+          "name": "boost-lexical-cast",
+          "version": "1.86.0"
+      },
+      {
+          "name": "boost-property-tree",
+          "version": "1.86.0"
+      }
+  ],
+  "builtin-baseline": "83972272512ce4ede5fc3b2ba98f6468b179f192"
 }

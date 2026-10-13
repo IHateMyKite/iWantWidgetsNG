@@ -8,6 +8,12 @@
 #pragma warning( disable : 4244 )
 
 using namespace std::literals;
+namespace logger = SKSE::log;
+
+namespace util
+{
+	using SKSE::stl::report_and_fail;
+}
 
 #define PAPYRUSFUNCHANDLE RE::StaticFunctionTag*
 #define PAPYRUSUNHOOKFPSALL 0
@@ -18,6 +24,10 @@ using namespace std::literals;
 
 //1=ON,0=OFF
 #define LOGGING 1
+
+#include "Plugin.h"
+
+#define DLLEXPORT __declspec(dllexport)
 
 #if(LOGGING != 0)
     #include <spdlog/sinks/basic_file_sink.h>

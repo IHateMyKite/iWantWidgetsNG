@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(
-	IWantWidgetsNG
+	IWantWidgetsNative
 	VERSION 1.2.8
 	LANGUAGES CXX
 )

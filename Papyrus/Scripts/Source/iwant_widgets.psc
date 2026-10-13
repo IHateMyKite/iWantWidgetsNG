@@ -19,7 +19,7 @@ Int Function loadWidget(String filename, Int xpos = 10000, Int ypos = 10000, Boo
     
     String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
     while loc_output == "W8"
-        Utility.waitMenuMode(0.016) ;wait one frame
+        Utility.waitMenuMode(0.001)
         loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
     endwhile
     
@@ -38,7 +38,7 @@ Int Function loadText(String displayString, String font = "$EverywhereFont", Int
     
     String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
     while loc_output == "W8"
-        Utility.waitMenuMode(0.016) ;wait one frame
+        Utility.waitMenuMode(0.001)
         loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
     endwhile
     
@@ -51,7 +51,7 @@ Int Function loadMeter(Int xpos = 10000, Int ypos = 10000, Bool visible = False)
     
     String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
     while loc_output == "W8"
-        Utility.waitMenuMode(0.016) ;wait one frame
+        Utility.waitMenuMode(0.001)
         loc_output = iwant_widgets_native.GetOutput(loc_outputid,"-1")
     endwhile
     
@@ -61,7 +61,7 @@ EndFunction
 Function _waitForReadyToLoad(bool abCheckReset = true)
     ; Make sure SkyUI say we're Ready
     While !iwant_widgets_native.IsHudReady() || (abCheckReset && iwant_widgets_native.IsResetting())
-        Utility.waitMenuMode(0.016) ;wait one frame
+        Utility.WaitMenuMode(0.25)
     EndWhile
 EndFunction
 
@@ -134,7 +134,7 @@ Int Function getXsize(Int id)
     
     String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
     while loc_output == "W8"
-        Utility.waitMenuMode(0.016)
+        Utility.waitMenuMode(0.001)
         loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
     endwhile
     return loc_output as Int
@@ -146,7 +146,7 @@ Int Function getYsize(Int id)
     
     String loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
     while loc_output == "W8"
-        Utility.waitMenuMode(0.016)
+        Utility.waitMenuMode(0.001)
         loc_output = iwant_widgets_native.GetOutput(loc_outputid,"100")
     endwhile
     return loc_output as Int
